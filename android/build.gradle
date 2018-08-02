@@ -32,3 +32,8 @@ android {
         disable 'InvalidPackage'
     }
 }
+
+dependencies {
+    compile 'commons-io:commons-io:2.4'
+}
+
