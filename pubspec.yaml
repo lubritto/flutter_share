@@ -1,13 +1,12 @@
 name: flutter_share
-description: Simple way to share a message, link or files from your flutter app
-version: 0.0.4
+description: Simple way to share files from your flutter app
+version: 0.0.5
 author: Lucas Britto <l_demello@hotmail.com>
 homepage: https://github.com/lubritto/flutter_share
 
 dependencies:
   flutter:
     sdk: flutter
-  documents_picker: ^0.0.2
 
 flutter:
   plugin:

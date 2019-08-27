@@ -23,12 +23,11 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    bool teste;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
 
       List<dynamic> docs = await DocumentsPicker.pickDocuments;
-      teste = await FlutterShare.share(title: 'teste', fileUrl: docs[0] as String);
+      await FlutterShare.share(title: 'teste', fileUrl: docs[0] as String);
 
     } on PlatformException {
 
