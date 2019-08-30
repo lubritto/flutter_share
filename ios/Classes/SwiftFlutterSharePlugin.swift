@@ -25,21 +25,84 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         self.result!(FlutterError(code: "multiple_request", message: "Cancelled by a second request", details: nil))
         self.result = nil
     }
+    
     if ("share" == call.method) {
-        
         self.result = result
-        
+        result(share(call: call))
+    } else if ("shareFile" == call.method) {
+        self.result = result
+        result(shareFile(call: call))
+    } else {
+        result(FlutterMethodNotImplemented)
+    }
+  }
+    
+    public func share(call: FlutterMethodCall) -> Bool {
         let args = call.arguments as? [String: Any?]
         
         let title = args!["title"] as? String
-        //let message = args!["message"] as? String
-        let fileUrl = args!["fileUrl"] as? String
+        let text = args!["text"] as? String
+        let linkUrl = args!["linkUrl"] as? String
+        
+        if (title == nil || title!.isEmpty) {
+            return false
+        }
+        
+        var sharedItems : Array<NSObject> = Array()
+        var textList : Array<String> = Array()
+        
+        // text
+        if (text != nil && text != "") {
+            textList.append(text!)
+        }
+        // Link url
+        if (linkUrl != nil && linkUrl != "") {
+            textList.append(linkUrl!)
+        }
+        
+        var textToShare = ""
+        
+        if (!textList.isEmpty) {
+            textToShare = textList.joined(separator: "\n\n")
+        }
+        
+        sharedItems.append((textToShare as NSObject?)!)
+        
+        let activityViewController = UIActivityViewController(activityItems: sharedItems, applicationActivities: nil)
+        
+        // Subject
+        if (title != nil && title != "") {
+            activityViewController.setValue(title, forKeyPath: "subject");
+        }
+        
+        DispatchQueue.main.async {
+            self.viewController?.present(activityViewController, animated: true, completion: nil)
+        }
+        
+        return true
+    }
+    
+    public func shareFile(call: FlutterMethodCall) -> Bool {
+        let args = call.arguments as? [String: Any?]
+        
+        let title = args!["title"] as? String
+        let text = args!["text"] as? String
+        let filePath = args!["filePath"] as? String
+        
+        if (title == nil || title!.isEmpty || filePath == nil || filePath!.isEmpty) {
+            return false
+        }
         
         var sharedItems : Array<NSObject> = Array()
         
-        //File url
-        if (fileUrl != nil && fileUrl != "") {
-            let filePath = URL(fileURLWithPath: fileUrl!)
+        // text
+        if (text != nil && text != "") {
+            sharedItems.append((text as NSObject?)!)
+        }
+        
+        // File url
+        if (filePath != nil && filePath != "") {
+            let filePath = URL(fileURLWithPath: filePath!)
             sharedItems.append(filePath as NSObject);
         }
         
@@ -54,12 +117,6 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
             self.viewController?.present(activityViewController, animated: true, completion: nil)
         }
         
-        result(true)
-        
-    } else {
-        result(FlutterMethodNotImplemented)
+        return true
     }
-    
-    
-  }
 }
