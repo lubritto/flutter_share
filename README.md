@@ -9,6 +9,8 @@ A Flutter plugin for IOS and Android providing a simple way to share a message, 
 * Share message and/or link urls.
 * Share local file path
 
+![android](assets/gifs/flutter_share_android.gif) ........... ![ios](assets/gifs/flutter_share_ios.gif)
+
 ## Installation
 
 First, add `flutter_share` as a [dependency in your pubspec.yaml file](https://flutter.io/using-packages/).
