@@ -92,5 +92,5 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-[Feedback welcome](https://github.com/flutter/flutter/issues) and
-[Pull Requests](https://github.com/flutter/plugins/pulls) are most welcome!
+[Feedback welcome](https://github.com/lubritto/flutter_share/issues) and
+[Pull Requests](https://github.com/lubritto/flutter_share/pulls) are most welcome!
