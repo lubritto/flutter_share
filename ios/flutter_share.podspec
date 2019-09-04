@@ -4,7 +4,6 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_share'
   s.version          = '0.0.1'
-  s.swift_version    = '4.1'
   s.summary          = 'Simple way to share a message, link or files from your flutter app'
   s.description      = <<-DESC
 Simple way to share a message, link or files from your flutter app

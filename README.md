@@ -13,20 +13,7 @@ A Flutter plugin for IOS and Android providing a simple way to share a message, 
 
 ## Installation
 
-First, add `flutter_share` as a [dependency in your pubspec.yaml file](https://flutter.io/using-packages/).
-
-### iOS
-
-Add if not exists one row to the `ios/podfile` after target runner:
-
-```
-...
-
-target 'Runner' do
-    use_frameworks!
-
-...
-```
+Add `flutter_share` as a [dependency in your pubspec.yaml file](https://flutter.io/using-packages/).
 
 ### Example
 
