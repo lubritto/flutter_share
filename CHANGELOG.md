@@ -1,3 +1,7 @@
+## 1.0.1
+
+* Fix: Get the top most ViewController(IOS embedded support)
+
 ## 1.0.0
 
 * **BREAKING CHANGE**: Add support to AndroidX
