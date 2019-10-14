@@ -1,20 +1,22 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
-import 'package:flutter_share/flutter_share.dart';
 import 'package:documents_picker/documents_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  final _controller = ScreenshotController();
+
   Future<void> share() async {
     await FlutterShare.share(
-      title: 'Example share',
-      text: 'Example share text',
-      linkUrl: 'https://flutter.dev/',
-      chooserTitle: 'Example Chooser Title'
-    );
+        title: 'Example share',
+        text: 'Example share text',
+        linkUrl: 'https://flutter.dev/',
+        chooserTitle: 'Example Chooser Title');
   }
 
   Future<void> shareFile() async {
@@ -28,6 +30,20 @@ class MyApp extends StatelessWidget {
     );
   }
 
+  Future<void> shareScreenShot() async {
+    final directory = await getExternalStorageDirectory();
+    final String localPath = '${directory.path}/test.png';
+
+    await _controller.capture(path: localPath);
+
+    await Future.delayed(Duration(seconds: 1));
+
+    await FlutterShare.shareFile(
+      title: 'Compartilhar comprovante',
+      filePath: localPath,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,19 +52,26 @@ class MyApp extends StatelessWidget {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FlatButton(
-                child: Text('Share text and link'),
-                onPressed: share,
-              ),
-              FlatButton(
-                child: Text('Share local file'),
-                onPressed: shareFile,
-              ),
-            ],
+          child: Screenshot(
+            controller: _controller,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FlatButton(
+                  child: Text('Share text and link'),
+                  onPressed: share,
+                ),
+                FlatButton(
+                  child: Text('Share local file'),
+                  onPressed: shareFile,
+                ),
+                FlatButton(
+                  child: Text('Share screenshot'),
+                  onPressed: shareScreenShot,
+                ),
+              ],
+            ),
           ),
         ),
       ),

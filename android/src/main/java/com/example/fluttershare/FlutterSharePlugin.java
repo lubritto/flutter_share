@@ -137,13 +137,11 @@ public class FlutterSharePlugin implements MethodCallHandler {
 
             file.createNewFile();
 
-            //write the bytes in file
             FileOutputStream fo = new FileOutputStream(file);
             fo.write(bArray);
-            // remember close de FileOutput
             fo.close();
 
-            Uri fileUri = Uri.fromFile(file);
+            Uri fileUri = Uri.parse(file.getPath());
 
             Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

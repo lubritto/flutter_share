@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class FlutterShare {
-  static const MethodChannel _channel = const MethodChannel('flutter_share');
+  static const MethodChannel _channel = MethodChannel('flutter_share');
 
   /// Shares a message or/and link url with app chooser.
   ///
@@ -24,7 +24,6 @@ class FlutterShare {
 
     if (title == null || title.isEmpty) {
       throw FlutterError('Title cannot be null');
-      return false;
     }
 
     final bool success = await _channel.invokeMethod('share', <String, dynamic>{
@@ -55,10 +54,8 @@ class FlutterShare {
 
     if (title == null || title.isEmpty) {
       throw FlutterError('Title cannot be null');
-      return false;
     } else if (filePath == null || filePath.isEmpty) {
       throw FlutterError('FilePath cannot be null');
-      return false;
     }
 
     final bool success =

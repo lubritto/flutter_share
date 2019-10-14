@@ -1,3 +1,11 @@
+## 1.0.2
+
+* Fix bug (FileUriExposedException) on new android versions
+
+## 1.0.1+1
+
+* Remove unused codes and improve description
+
 ## 1.0.1
 
 * Fix: Get the top most ViewController(IOS embedded support)

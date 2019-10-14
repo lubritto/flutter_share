@@ -1,0 +1,7 @@
+include: package:pedantic/analysis_options.yaml
+
+linter:
+  rules:
+    - void_checks
+    - unnecessary_new
+    - type_annotate_public_apis
