@@ -6,10 +6,10 @@ A Flutter plugin for IOS and Android providing a simple way to share a message, 
 
 ## Features:
 
-* Share message and/or link urls.
-* Share local file path
+* Share messages and/or link urls.
+* Share local files.
 
-![android](assets/gifs/flutter_share_android.gif) ........... ![ios](assets/gifs/flutter_share_ios.gif)
+![android](assets/gifs/flutter_share_android.gif) &nbsp; &nbsp; &nbsp; &nbsp; ![ios](assets/gifs/flutter_share_ios.gif)
 
 ## Installation
 
@@ -27,6 +27,41 @@ target 'Runner' do
 
 ...
 ```
+
+### Android
+
+If you pretends to use the file share, you need to configure the file provider, this will give access to the files turning possible to share with other applications.
+
+Add to `AndroidManifest.xml`:
+
+```
+<application>
+...
+<provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.provider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/provider_paths"/>
+</provider>
+</application>
+```
+Obs: You can change the android:name if you have an extension of file provider.
+
+Add `res/xml/provider_paths.xml`:
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-path name="external_files" path="."/>
+</paths>
+```
+
+If you want to learn more about file provider you can access: 
+
+  - https://developer.android.com/reference/android/support/v4/content/FileProvider 
 
 ### Example
 

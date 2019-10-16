@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:documents_picker/documents_picker.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,14 @@ class MyApp extends StatelessWidget {
   }
 
   Future<void> shareScreenShot() async {
-    final directory = await getExternalStorageDirectory();
-    final String localPath = '${directory.path}/test.png';
+    Directory directory;
+    if (Platform.isAndroid) {
+      directory = await getExternalStorageDirectory();
+    } else {
+      directory = await getApplicationDocumentsDirectory();
+    }
+    final String localPath =
+        '${directory.path}/${DateTime.now().toIso8601String()}.png';
 
     await _controller.capture(path: localPath);
 

@@ -7,8 +7,8 @@ dependencies:
 
   cupertino_icons: ^0.1.2
   screenshot: ^0.1.1
-  documents_picker: ^0.0.2
-  path_provider: ^1.2.0
+  documents_picker: ^1.0.0
+  path_provider: ^1.3.0
 
 dev_dependencies:
   flutter_test:

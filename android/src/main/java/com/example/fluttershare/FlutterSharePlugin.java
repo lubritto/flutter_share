@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.core.content.FileProvider;
+
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import io.flutter.plugin.common.MethodCall;
@@ -15,8 +15,6 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
-
-import org.apache.commons.io.FileUtils;
 
 
 /** FlutterSharePlugin */
@@ -39,15 +37,15 @@ public class FlutterSharePlugin implements MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("shareFile")) {
-            result.success(shareFile(call));
+            shareFile(call, result);
         } else if (call.method.equals("share")) {
-            result.success(share(call));
+            share(call, result);
         } else {
             result.notImplemented();
         }
     }
 
-    private boolean share(MethodCall call) {
+    private void share(MethodCall call, Result result) {
         try
         {
             String title = call.argument("title");
@@ -58,7 +56,8 @@ public class FlutterSharePlugin implements MethodCallHandler {
             if (title == null || title.isEmpty())
             {
                 Log.println(Log.ERROR, "", "FlutterShare Error: Title null or empty");
-                return false;
+                result.error("FlutterShare: Title cannot be null or empty", null, null);
+                return;
             }
 
             ArrayList<String> extraTextList = new ArrayList<>();
@@ -89,59 +88,33 @@ public class FlutterSharePlugin implements MethodCallHandler {
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mRegistrar.context().startActivity(chooserIntent);
 
-            return true;
+            result.success(true);
         }
         catch (Exception ex)
         {
             Log.println(Log.ERROR, "", "FlutterShare: Error");
+            result.error(ex.getMessage(), null, null);
         }
-
-        return false;
     }
 
-    private boolean shareFile(MethodCall call) {
-        File file = null;
-
-        String title = call.argument("title");
-        String text = call.argument("text");
-        String filePath = call.argument("filePath");
-        String chooserTitle = call.argument("chooserTitle");
-
+    private void shareFile(MethodCall call, Result result) {
         try
         {
+            String title = call.argument("title");
+            String text = call.argument("text");
+            String filePath = call.argument("filePath");
+            String chooserTitle = call.argument("chooserTitle");
+
             if (filePath == null || filePath.isEmpty())
             {
                 Log.println(Log.ERROR, "", "FlutterShare: ShareLocalFile Error: filePath null or empty");
-                return false;
+                result.error("FlutterShare: FilePath cannot be null or empty", null, null);
+                return;
             }
 
-            String fileName = Uri.parse(filePath).getLastPathSegment();
+            File file = new File(filePath);
 
-            File oldFile = new File(filePath);
-
-            byte[] bArray = FileUtils.readFileToByteArray(oldFile);
-
-            String tempDirPath = mRegistrar.context().getExternalCacheDir()
-                    + File.separator + "TempFiles" + File.separator;
-            String path = tempDirPath + fileName;
-
-            File tempDir = new File(tempDirPath);
-
-            file = new File(path);
-
-            if (!tempDir.exists())
-                tempDir.mkdirs();
-            else {
-                DeleteAllTempFiles();
-            }
-
-            file.createNewFile();
-
-            FileOutputStream fo = new FileOutputStream(file);
-            fo.write(bArray);
-            fo.close();
-
-            Uri fileUri = Uri.parse(file.getPath());
+            Uri fileUri = FileProvider.getUriForFile(mRegistrar.context(), mRegistrar.context().getApplicationContext().getPackageName() + ".provider", file);
 
             Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -158,39 +131,12 @@ public class FlutterSharePlugin implements MethodCallHandler {
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mRegistrar.context().startActivity(chooserIntent);
 
-            return true;
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-            Log.println(Log.ERROR, "", "FlutterShare: IOException");
+            result.success(true);
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
+            result.error(ex.getMessage(), null, null);
             Log.println(Log.ERROR, "", "FlutterShare: Error");
-        }
-        finally {
-            if (file != null)
-                file.deleteOnExit();
-        }
-
-        return false;
-    }
-
-
-    public void DeleteAllTempFiles(){
-        String tempDirPath = mRegistrar.context().getExternalCacheDir()
-                + File.separator + "TempFiles" + File.separator;
-
-        File tempDir = new File(tempDirPath);
-
-        if (tempDir.exists()) {
-
-            String[] children = tempDir.list();
-            for (int i = 0; i < children.length; i++)
-            {
-                new File(tempDir, children[i]).delete();
-            }
         }
     }
 }

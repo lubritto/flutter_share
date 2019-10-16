@@ -1,6 +1,6 @@
 ## 1.0.2
 
-* Fix bug (FileUriExposedException) on new android versions
+* Fix Android bug (FileUriExposedException) on new versions with FileProvider implementation (see the readme to configure)
 
 ## 1.0.1+1
 

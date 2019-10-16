@@ -42,7 +42,7 @@ packages:
       name: documents_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.3"
+    version: "1.0.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -54,7 +54,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.1+1"
+    version: "1.0.2+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
