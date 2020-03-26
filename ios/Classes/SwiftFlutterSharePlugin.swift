@@ -61,7 +61,7 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         }
 
         DispatchQueue.main.async {
-            UIApplication.topViewController()?.present(activityViewController, animated: true, completion: nil)
+            self.present(activityViewController: activityViewController)
         }
 
         return true
@@ -99,10 +99,29 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         }
 
         DispatchQueue.main.async {
-            UIApplication.topViewController()?.present(activityViewController, animated: true, completion: nil)
+          self.present(activityViewController: activityViewController)
         }
         
         return true
+    }
+  
+    private func present(activityViewController: UIActivityViewController) {
+      guard let topViewController = UIApplication.topViewController() else { return }
+      if UIDevice.current.userInterfaceIdiom == .pad {
+        // On iPad, UIActivityViewController must be presented using a popover.
+        // Since every popover must have a point of origin, we set it to be the center bottom
+        // mimicking the behaviour of iPhones.
+        activityViewController.popoverPresentationController?.sourceView = topViewController.view
+        let popover = UIPopoverController.init(contentViewController: activityViewController)
+        popover.present(
+          from: CGRect(x: topViewController.view.frame.width / 2, y: topViewController.view.frame.size.height, width: 0, height: 0),
+          in: topViewController.view,
+          permittedArrowDirections: .any,
+          animated: true
+        )
+      } else {
+        topViewController.present(activityViewController, animated: true)
+      }
     }
 }
 
