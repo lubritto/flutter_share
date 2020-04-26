@@ -103,6 +103,7 @@ public class FlutterSharePlugin implements MethodCallHandler {
             String title = call.argument("title");
             String text = call.argument("text");
             String filePath = call.argument("filePath");
+            String fileType = call.argument("fileType");
             String chooserTitle = call.argument("chooserTitle");
 
             if (filePath == null || filePath.isEmpty())
@@ -120,7 +121,7 @@ public class FlutterSharePlugin implements MethodCallHandler {
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(Intent.ACTION_SEND);
-            intent.setType("*/*");
+            intent.setType(fileType);
             intent.putExtra(Intent.EXTRA_SUBJECT, title);
             intent.putExtra(Intent.EXTRA_TEXT, text);
             intent.putExtra(Intent.EXTRA_STREAM, fileUri);

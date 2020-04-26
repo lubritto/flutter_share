@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
     await FlutterShare.shareFile(
       title: 'Compartilhar comprovante',
       filePath: localPath,
+      fileType: 'image/png'
     );
   }
 
