@@ -26,7 +26,7 @@ public class FlutterSharePlugin implements MethodCallHandler, FlutterPlugin {
 
     private Context context;
 
-    private FlutterSharePlugin() {}
+    FlutterSharePlugin() {}
 
     /** Plugin registration. */
     public static void registerWith(Registrar registrar) {
