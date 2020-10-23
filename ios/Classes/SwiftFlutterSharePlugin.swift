@@ -61,7 +61,7 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         }
 
         DispatchQueue.main.async {
-            UIApplication.topViewController()?.present(activityViewController, animated: true, completion: nil)
+            self.presentActivityView(activityViewController: activityViewController)
         }
 
         return true
@@ -108,10 +108,29 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         }
 
         DispatchQueue.main.async {
-            UIApplication.topViewController()?.present(activityViewController, animated: true, completion: nil)
+            self.presentActivityView(activityViewController: activityViewController)
         }
         
         return true
+    }
+
+    private func presentActivityView(activityViewController: UIActivityViewController) {
+        // using this fake view controller to prevent this iOS 13+ dismissing the top view when sharing with "Save Image" option
+
+        let fakeViewController = TransparentViewController()
+        fakeViewController.modalPresentationStyle = .overFullScreen
+
+        activityViewController.completionWithItemsHandler = { [weak fakeViewController] _, _, _, _ in
+            if let presentingViewController = fakeViewController?.presentingViewController {
+                presentingViewController.dismiss(animated: false, completion: nil)
+            } else {
+                fakeViewController?.dismiss(animated: false, completion: nil)
+            }
+        }
+
+        UIApplication.topViewController()?.present(fakeViewController, animated: true) { [weak fakeViewController] in
+            fakeViewController?.present(activityViewController, animated: true, completion: nil)
+        }
     }
 }
 
@@ -129,5 +148,12 @@ extension UIApplication {
             return topViewController(controller: presented)
         }
         return controller
+    }
+}
+
+class TransparentViewController: UIViewController {
+    override func viewDidLoad() {
+        view.backgroundColor = UIColor.clear
+        view.isOpaque = false
     }
 }
