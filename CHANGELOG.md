@@ -1,6 +1,9 @@
-## 1.0.2+2
+# CHANGELOG
+
+## 1.0.3
 
 * Fix share image top view controller dismissal bug on iOS 13+
+* Update to use the new platform definitions
 
 ## 1.0.2+1
 
