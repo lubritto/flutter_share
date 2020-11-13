@@ -1,15 +1,19 @@
 package com.example.fluttershare;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -18,21 +22,36 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 
 /** FlutterSharePlugin */
-public class FlutterSharePlugin implements MethodCallHandler {
+public class FlutterSharePlugin implements FlutterPlugin, MethodCallHandler {
+    private Context context;
+    private MethodChannel methodChannel;
 
-    private Registrar mRegistrar;
-
-    private FlutterSharePlugin(Registrar mRegistrar) {
-        this.mRegistrar = mRegistrar;
-    }
+    public FlutterSharePlugin() {}
 
     /** Plugin registration. */
-    public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_share");
-        FlutterSharePlugin plugin = new FlutterSharePlugin(registrar);
-        channel.setMethodCallHandler(plugin);
+    @SuppressWarnings("deprecation")
+    public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+        final FlutterSharePlugin instance = new FlutterSharePlugin();
+        instance.onAttachedToEngine(registrar.context(), registrar.messenger());
     }
 
+    @Override
+    public void onAttachedToEngine(FlutterPluginBinding binding) {
+        onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
+    }
+
+    private void onAttachedToEngine(Context applicationContext, BinaryMessenger messenger) {
+        this.context = applicationContext;
+        methodChannel = new MethodChannel(messenger, "flutter_share");
+        methodChannel.setMethodCallHandler(this);
+    }
+
+    @Override
+    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+        context = null;
+        methodChannel.setMethodCallHandler(null);
+        methodChannel = null;
+    }
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
@@ -86,7 +105,7 @@ public class FlutterSharePlugin implements MethodCallHandler {
             Intent chooserIntent = Intent.createChooser(intent, chooserTitle);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mRegistrar.context().startActivity(chooserIntent);
+            context.startActivity(chooserIntent);
 
             result.success(true);
         }
@@ -114,7 +133,7 @@ public class FlutterSharePlugin implements MethodCallHandler {
 
             File file = new File(filePath);
 
-            Uri fileUri = FileProvider.getUriForFile(mRegistrar.context(), mRegistrar.context().getApplicationContext().getPackageName() + ".provider", file);
+            Uri fileUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
 
             Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -129,7 +148,7 @@ public class FlutterSharePlugin implements MethodCallHandler {
             Intent chooserIntent = Intent.createChooser(intent, chooserTitle);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mRegistrar.context().startActivity(chooserIntent);
+            context.startActivity(chooserIntent);
 
             result.success(true);
         }
