@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.0.5
+* Fix sdk environment
+
 ## 1.0.4
 * Update to android v2 embedding
 
