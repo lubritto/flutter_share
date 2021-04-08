@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:documents_picker/documents_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:path_provider/path_provider.dart';
@@ -21,27 +21,27 @@ class MyApp extends StatelessWidget {
   }
 
   Future<void> shareFile() async {
-    List<dynamic> docs = await DocumentsPicker.pickDocuments;
-    if (docs == null || docs.isEmpty) return null;
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null || result.files.isEmpty) return null;
 
     await FlutterShare.shareFile(
       title: 'Example share',
       text: 'Example share text',
-      filePath: docs[0] as String,
+      filePath: result.files[0] as String,
     );
   }
 
-  Future<void> shareScreenShot() async {
-    Directory directory;
+  Future<void> shareScreenshot() async {
+    Directory? directory;
     if (Platform.isAndroid) {
       directory = await getExternalStorageDirectory();
     } else {
       directory = await getApplicationDocumentsDirectory();
     }
     final String localPath =
-        '${directory.path}/${DateTime.now().toIso8601String()}.png';
+        '${directory!.path}/${DateTime.now().toIso8601String()}.png';
 
-    await _controller.capture(path: localPath);
+    await _controller.captureAndSave(localPath);
 
     await Future.delayed(Duration(seconds: 1));
 
@@ -66,17 +66,17 @@ class MyApp extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('Share text and link'),
                   onPressed: share,
                 ),
-                FlatButton(
+                TextButton(
                   child: Text('Share local file'),
                   onPressed: shareFile,
                 ),
-                FlatButton(
+                TextButton(
                   child: Text('Share screenshot'),
-                  onPressed: shareScreenShot,
+                  onPressed: shareScreenshot,
                 ),
               ],
             ),

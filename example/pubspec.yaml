@@ -1,14 +1,18 @@
 name: flutter_share_example
 description: Demonstrates how to use the flutter_share plugin.
 
+publish_to: none
+
+version: 1.0.0
+
 dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^0.1.2
-  screenshot: ^0.1.1
-  documents_picker: ^1.0.0
-  path_provider: ^1.3.0
+  cupertino_icons: ^1.0.2
+  screenshot: ^1.0.0-nullsafety.1
+  file_picker: ^3.0.1
+  path_provider: ^2.0.1
 
   flutter_share:
     path: ../
@@ -20,3 +24,6 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'

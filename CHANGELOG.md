@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.0.0
+* Fix iPad bug
+* Add the [fileType] (only for Android) 
+* Add Null Safety suport
+
 ## 1.0.5
 * Fix sdk environment
 
