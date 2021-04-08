@@ -60,6 +60,15 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
             activityViewController.setValue(title, forKeyPath: "subject");
         }
 
+        // For iPads, fix issue where Exception is thrown by using a popup instead
+        if UIDevice.current.userInterfaceIdiom == .pad {
+          activityViewController.popoverPresentationController?.sourceView = UIApplication.topViewController()?.view
+          if let view = UIApplication.topViewController()?.view {
+              activityViewController.popoverPresentationController?.permittedArrowDirections = []
+              activityViewController.popoverPresentationController?.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+          }
+        }
+
         DispatchQueue.main.async {
             self.presentActivityView(activityViewController: activityViewController)
         }
@@ -108,7 +117,7 @@ public class SwiftFlutterSharePlugin: NSObject, FlutterPlugin {
         }
 
         DispatchQueue.main.async {
-            self.presentActivityView(activityViewController: activityViewController)
+          UIApplication.topViewController()?.present(activityViewController, animated: true, completion: nil)
         }
         
         return true
