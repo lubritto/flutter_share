@@ -9,8 +9,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -147,6 +151,16 @@ public class FlutterSharePlugin implements FlutterPlugin, MethodCallHandler {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             Intent chooserIntent = Intent.createChooser(intent, chooserTitle);
+
+            
+            PackageManager packageManager = mRegistrar.context().getApplicationContext().getPackageManager();
+            List<ResolveInfo> resInfoList = packageManager.queryIntentActivities(chooserIntent, PackageManager.MATCH_DEFAULT_ONLY);
+
+            for (ResolveInfo resolveInfo : resInfoList) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                mRegistrar.context().getApplicationContext().grantUriPermission(packageName, fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+            
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(chooserIntent);
