@@ -2,6 +2,8 @@
 
 [![pub package](https://img.shields.io/pub/v/flutter_share.svg)](https://pub.dartlang.org/packages/flutter_share)
 
+## ** This plugin was discontinued after the [flutter official one](https://pub.dev/packages/share) add support to files **
+
 A Flutter plugin for IOS and Android providing a simple way to share a message, link or local files.
 
 ## Features:

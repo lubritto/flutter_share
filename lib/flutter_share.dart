@@ -48,7 +48,8 @@ class FlutterShare {
       {@required String title,
       @required String filePath,
       String text,
-      String chooserTitle}) async {
+      String chooserTitle,
+      String fileType = '*/*'}) async {
     assert(title != null && title.isNotEmpty);
     assert(filePath != null && filePath.isNotEmpty);
 
@@ -63,6 +64,7 @@ class FlutterShare {
       'title': title,
       'text': text,
       'filePath': filePath,
+      'fileType': fileType,
       'chooserTitle': chooserTitle,
     });
 
