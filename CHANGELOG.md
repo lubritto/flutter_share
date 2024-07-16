@@ -1,4 +1,6 @@
 # CHANGELOG
+## 2.0.1
+* Add Android namespace
 
 ## 2.0.0
 * Fix iPad bug
