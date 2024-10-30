@@ -15,7 +15,8 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 34
+    namespace "com.example.fluttershareexample"
 
     lintOptions {
         disable 'InvalidPackage'
@@ -24,7 +25,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.fluttershareexample"
-        minSdkVersion 17
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"

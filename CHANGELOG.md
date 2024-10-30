@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.1
+
+* Removes references to Flutter v1 android embedding classes.
+
 ## 2.0.0
 * Fix iPad bug
 * Add the [fileType] (only for Android) 
