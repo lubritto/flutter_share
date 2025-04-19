@@ -1,5 +1,6 @@
 package com.example.fluttershare;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,48 +14,63 @@ import java.io.File;
 import java.util.ArrayList;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
-
 
 /** FlutterSharePlugin */
-public class FlutterSharePlugin implements FlutterPlugin, MethodCallHandler {
+public class FlutterSharePlugin implements FlutterPlugin, ActivityAware, MethodCallHandler {
     private Context context;
+    private Activity activity;
     private MethodChannel methodChannel;
 
-    public FlutterSharePlugin() {}
-
-    /** Plugin registration. */
-    @SuppressWarnings("deprecation")
-    public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-        final FlutterSharePlugin instance = new FlutterSharePlugin();
-        instance.onAttachedToEngine(registrar.context(), registrar.messenger());
-    }
-
     @Override
-    public void onAttachedToEngine(FlutterPluginBinding binding) {
-        onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
-    }
-
-    private void onAttachedToEngine(Context applicationContext, BinaryMessenger messenger) {
-        this.context = applicationContext;
-        methodChannel = new MethodChannel(messenger, "flutter_share");
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        this.context = binding.getApplicationContext();
+        methodChannel = new MethodChannel(binding.getBinaryMessenger(), "flutter_share");
         methodChannel.setMethodCallHandler(this);
     }
 
     @Override
-    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        if (methodChannel != null) {
+            methodChannel.setMethodCallHandler(null);
+            methodChannel = null;
+        }
         context = null;
-        methodChannel.setMethodCallHandler(null);
-        methodChannel = null;
+        activity = null;
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        activity = null;
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        activity = null;
     }
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
+        if (activity == null) {
+            result.error("NO_ACTIVITY", "Share plugin requires a foreground activity.", null);
+            return;
+        }
+
         if (call.method.equals("shareFile")) {
             shareFile(call, result);
         } else if (call.method.equals("share")) {
@@ -65,15 +81,13 @@ public class FlutterSharePlugin implements FlutterPlugin, MethodCallHandler {
     }
 
     private void share(MethodCall call, Result result) {
-        try
-        {
+        try {
             String title = call.argument("title");
             String text = call.argument("text");
             String linkUrl = call.argument("linkUrl");
             String chooserTitle = call.argument("chooserTitle");
 
-            if (title == null || title.isEmpty())
-            {
+            if (title == null || title.isEmpty()) {
                 Log.println(Log.ERROR, "", "FlutterShare Error: Title null or empty");
                 result.error("FlutterShare: Title cannot be null or empty", null, null);
                 return;
@@ -105,28 +119,24 @@ public class FlutterSharePlugin implements FlutterPlugin, MethodCallHandler {
             Intent chooserIntent = Intent.createChooser(intent, chooserTitle);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(chooserIntent);
+            activity.startActivity(chooserIntent);
 
             result.success(true);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Log.println(Log.ERROR, "", "FlutterShare: Error");
             result.error(ex.getMessage(), null, null);
         }
     }
 
     private void shareFile(MethodCall call, Result result) {
-        try
-        {
+        try {
             String title = call.argument("title");
             String text = call.argument("text");
             String filePath = call.argument("filePath");
             String fileType = call.argument("fileType");
             String chooserTitle = call.argument("chooserTitle");
 
-            if (filePath == null || filePath.isEmpty())
-            {
+            if (filePath == null || filePath.isEmpty()) {
                 Log.println(Log.ERROR, "", "FlutterShare: ShareLocalFile Error: filePath null or empty");
                 result.error("FlutterShare: FilePath cannot be null or empty", null, null);
                 return;
@@ -149,12 +159,10 @@ public class FlutterSharePlugin implements FlutterPlugin, MethodCallHandler {
             Intent chooserIntent = Intent.createChooser(intent, chooserTitle);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(chooserIntent);
+            activity.startActivity(chooserIntent);
 
             result.success(true);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             result.error(ex.getMessage(), null, null);
             Log.println(Log.ERROR, "", "FlutterShare: Error");
         }
