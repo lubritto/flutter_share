@@ -6,3 +6,6 @@
 
 build/
 .idea/
+.project
+.classpath
+.settings/
